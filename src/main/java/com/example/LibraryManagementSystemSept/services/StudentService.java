@@ -4,7 +4,8 @@ package com.example.LibraryManagementSystemSept.services;
 import com.example.LibraryManagementSystemSept.CustomException.StudentRelatedException.StudentNotFoundException;
 import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.Request.AddStudentDto;
 import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.ResponceDTO.StudentResponceDto;
-import com.example.LibraryManagementSystemSept.enums.CardStatus;
+import com.example.LibraryManagementSystemSept.Transformers.LibraryCardTransformer;
+import com.example.LibraryManagementSystemSept.Transformers.StudentTransformer;
 import com.example.LibraryManagementSystemSept.enums.Department;
 import com.example.LibraryManagementSystemSept.enums.Gender;
 import com.example.LibraryManagementSystemSept.models.LibraryCard;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class StudentService {
@@ -27,23 +27,21 @@ public class StudentService {
     public StudentResponceDto addStudent (AddStudentDto addStudentDto)
     {
 
-        Student student=new Student(addStudentDto);
-       LibraryCard libraryCard=new LibraryCard();
-       libraryCard.setStudent(student);
-       libraryCard.setCardId(UUID.randomUUID().toString());
-       libraryCard.setCardStatus(CardStatus.Active);
+        Student student= StudentTransformer.AddStudentDtoToStudent(addStudentDto);
 
-       student.setLibraryCard(libraryCard);  //allocated library_card to the Student..
-       student= studentRepository.save(student); //saved both student and library card.. here because bidirectional mapping.
+        LibraryCard libraryCard= LibraryCardTransformer.GenerateLibraryCardForStudent(student);
 
-        StudentResponceDto studentResponceDto=new StudentResponceDto(student);
-        studentResponceDto.setLibraryCardId(student.getLibraryCard().getCardId());
-        studentResponceDto.setMessage("Student has been added to the database successfully");
+         student.setLibraryCard(libraryCard);  //allocated library_card to the Student..
+
+         student= studentRepository.save(student); //saved both student and library card.. here because bidirectional mapping.
+
+        StudentResponceDto studentResponceDto=StudentTransformer.StudentToStudentResponceDto(student);
 
         return studentResponceDto;
     }
 
-    public Department getDeptById(Integer id) throws  Exception{
+    public Department getDeptById(Integer id) throws  Exception
+    {
         Optional<Student>optionalStudent=studentRepository.findById(id);
         if(optionalStudent.isPresent()==false)throw new Exception("Student with Id is not found");
 
@@ -71,9 +69,8 @@ public class StudentService {
 
       student= studentRepository.save(student);
 
-      StudentResponceDto studentResponceDto=new StudentResponceDto(student);
-      studentResponceDto.setLibraryCardId(student.getLibraryCard().getCardId());
-      studentResponceDto.setMessage("Student with regNo:"+regNo+" has been Updated Successfully!!");
+      StudentResponceDto studentResponceDto=StudentTransformer.StudentToStudentResponceDto(student);
+
         return studentResponceDto;
     }
 
@@ -85,9 +82,8 @@ public class StudentService {
         List<StudentResponceDto>studentResponceDtos=new ArrayList<>();
         for(Student student:studentList)
         {
-            StudentResponceDto studentResponceDto=new StudentResponceDto(student);
-            studentResponceDto.setLibraryCardId(student.getLibraryCard().getCardId());
-            studentResponceDto.setMessage("");
+            StudentResponceDto studentResponceDto=StudentTransformer.StudentToStudentResponceDto(student);
+
             studentResponceDtos.add(studentResponceDto);
         }
 
@@ -101,17 +97,9 @@ public class StudentService {
         List<StudentResponceDto>studentResponceDtos=new ArrayList<>();
         for(Student student:studentList)
         {
-            StudentResponceDto studentResponceDto=StudentResponceDto.builder()
-                            .name(student.getName())
-                                    .email(student.getEmailId())
-                                            .reg(student.getRegNo())
-                                                    .department(student.getDepartment())
-                                                            .libraryCardId(student.getLibraryCard().getCardId())
-                                                                    .message("Good Student !!")
-                                                                            .build();
+            StudentResponceDto studentResponceDto=StudentTransformer.StudentToStudentResponceDto(student);
             studentResponceDtos.add(studentResponceDto);
         }
-
         return studentResponceDtos;
     }
 }

@@ -14,8 +14,8 @@ import java.sql.Time;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
+@Builder
 public class Student
 {
     @Id
@@ -31,15 +31,6 @@ public class Student
     private String emailId;
 
     int age;
-
-   public Student(AddStudentDto addStudentDto)
-    {
-       this.name=addStudentDto.getName();
-       this.age=addStudentDto.getAge();
-       this.emailId=addStudentDto.getEmail();
-       this.department=addStudentDto.getDepartment();
-       this.gender=addStudentDto.getGender();
-    }
 
     @Enumerated(EnumType.STRING)
     Gender gender;

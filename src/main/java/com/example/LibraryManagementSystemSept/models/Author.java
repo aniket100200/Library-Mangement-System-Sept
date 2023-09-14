@@ -11,8 +11,7 @@ import java.sql.Date;
 import java.util.List;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -34,6 +33,12 @@ public class Author
     @Enumerated(EnumType.STRING)
     Gender gender;
 
+
     @OneToMany(mappedBy = "author",cascade = CascadeType.ALL)
     List<Book>books=new ArrayList<>();
+
+    public int getNumberOfBooks()
+    {
+        return this.books.size();
+    }
 }

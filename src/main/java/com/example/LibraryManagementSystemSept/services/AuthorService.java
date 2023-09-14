@@ -5,6 +5,8 @@ import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.Request.AddAuthor
 import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.Request.UpdateEmailDto;
 import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.ResponceDTO.AuthorResponceDto;
 import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.ResponceDTO.BookResponceDto;
+import com.example.LibraryManagementSystemSept.Transformers.AuthorTransformer;
+import com.example.LibraryManagementSystemSept.Transformers.BookTransformer;
 import com.example.LibraryManagementSystemSept.models.Author;
 import com.example.LibraryManagementSystemSept.models.Book;
 import com.example.LibraryManagementSystemSept.repositories.AuthorRepository;
@@ -24,47 +26,32 @@ public class AuthorService
     private AuthorRepository authorRepository;
     public AuthorResponceDto addAuthor(AddAuthorRequestDto addAuthorRequestDto)
     {
-        Author author=Author.builder()
-                .age(addAuthorRequestDto.getAge())
-                .emailId(addAuthorRequestDto.getEmail())
-                .gender(addAuthorRequestDto.getGender())
-                .name(addAuthorRequestDto.getName())
-                .books(new ArrayList<>())
-                .build();
-      Author savedAuthor= authorRepository.save(author);
+        //just Transform into Author
+        Author author= AuthorTransformer.AuthorFromAddAuthorRequestDto(addAuthorRequestDto);
 
-        AuthorResponceDto responceDto=AuthorResponceDto.builder()
-                .age(author.getAge())
-                .email(author.getEmailId())
-                .name(savedAuthor.getName())
-                .gender(author.getGender())
-                .lastActivity(author.getLastActivity())
-                .build();
+        Author savedAuthor= authorRepository.save(author);
+
+        AuthorResponceDto responceDto=AuthorTransformer.AuthorToAuthorResponceDto(savedAuthor);
 
         return responceDto;
     }
 
     public AuthorResponceDto updateEmail(UpdateEmailDto updateEmailDto)
     {
-        Optional<Author>author=authorRepository.findById(updateEmailDto.getAuthorId());
-        if(author.isPresent()==false)
+        Optional<Author>optional=authorRepository.findById(updateEmailDto.getAuthorId());
+        if(optional.isPresent()==false)
         {
             log.error("Author with author Id"+updateEmailDto.getAuthorId()+" Not Found!!");
             throw new AuthorNotFoundException("Author Not Found!!");
         }
 
-        Author author1=author.get();
-        author1.setEmailId(updateEmailDto.getEmail());
+        Author author=optional.get();
 
-       author1= authorRepository.save(author1);
+        author.setEmailId(updateEmailDto.getEmail());
 
-       AuthorResponceDto authorResponceDto=AuthorResponceDto.builder()
-               .age(author1.getAge())
-               .name(author1.getName())
-               .email(author1.getEmailId())
-               .lastActivity(author1.getLastActivity())
-               .gender(author1.getGender())
-               .message("Author Has Been updated Successfully").build();
+       author= authorRepository.save(author);
+
+       AuthorResponceDto authorResponceDto=AuthorTransformer.AuthorToAuthorResponceDto(author);
 
         return authorResponceDto;
     }
@@ -84,13 +71,9 @@ public class AuthorService
         List<BookResponceDto>books=new ArrayList<>();
         for(Book book:author.getBooks())
         {
-            BookResponceDto bookResponceDto=BookResponceDto.builder()
-                    .authorName(book.getAuthor().getName())
-                    .cost(book.getCost())
-                    .genre(book.getGenre())
-                    .title(book.getTitle())
-                    .noOfPages(book.getNoOfPages()).build();
+            BookResponceDto bookResponceDto= BookTransformer.BookToBookResponceDto(book);
 
+            //addition of the answerList..
             books.add(bookResponceDto);
         }
         return books;
@@ -102,14 +85,11 @@ public class AuthorService
 
         List<AuthorResponceDto>authors=new ArrayList<>();
         for(Author author:authorList){
-            if(author.getBooks().size()>x){
-               AuthorResponceDto authorResponceDto=AuthorResponceDto.builder()
-                       .name(author.getName())
-                       .age(author.getAge())
-                       .message("Happy")
-                       .email(author.getEmailId())
-                       .gender(author.getGender())
-                       .lastActivity(author.getLastActivity()).build();
+            if(author.getBooks().size()>x)
+            {
+               AuthorResponceDto authorResponceDto=AuthorTransformer.AuthorToAuthorResponceDto(author);
+
+               //adding of the answer
                authors.add(authorResponceDto);
             }
         }

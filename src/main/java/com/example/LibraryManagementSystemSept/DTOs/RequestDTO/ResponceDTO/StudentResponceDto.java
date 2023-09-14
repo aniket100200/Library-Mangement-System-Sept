@@ -17,16 +17,6 @@ public class StudentResponceDto
     Department department;
     String email;
 
-    String message;
-
-    public StudentResponceDto(Student student)
-    {
-        this.reg= student.getRegNo();
-        name=student.getName();
-        department=student.getDepartment();
-        email=student.getEmailId();
-    }
-
     String libraryCardId; //this will be uuid..
 
 }

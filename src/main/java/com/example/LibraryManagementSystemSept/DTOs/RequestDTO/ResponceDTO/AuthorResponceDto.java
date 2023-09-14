@@ -18,5 +18,4 @@ public class AuthorResponceDto
     String email;
     Date lastActivity;
     Gender gender;
-    String message;
 }

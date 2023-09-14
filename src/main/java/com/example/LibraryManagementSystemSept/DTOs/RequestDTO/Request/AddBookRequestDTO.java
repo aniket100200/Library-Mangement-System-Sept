@@ -1,16 +1,16 @@
 package com.example.LibraryManagementSystemSept.DTOs.RequestDTO.Request;
 
 import com.example.LibraryManagementSystemSept.enums.Genre;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.util.Date;
 
-@Getter
-@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AddBookRequestDTO
 {

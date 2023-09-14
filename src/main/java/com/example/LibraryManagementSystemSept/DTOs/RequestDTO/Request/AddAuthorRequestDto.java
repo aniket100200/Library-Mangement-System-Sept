@@ -5,11 +5,10 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Builder
 public class AddAuthorRequestDto
 {
     String name;

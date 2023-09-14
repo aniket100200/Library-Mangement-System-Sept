@@ -122,7 +122,7 @@ public class BookService
 
     public List<BookResponceDto> findAllBooksBetweenAandB(Integer a, Integer b)
     {
-        List<Book>bookList=bookRepository.findAll();
+        List<Book>bookList=bookRepository.findAllBooksNoOfPagesBetweenAandB(a,b);
 
         List<BookResponceDto>books=new ArrayList<>();
         for(Book book:bookList)
