@@ -7,6 +7,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Setter
@@ -32,8 +34,12 @@ public class Book
 
     LocalDate dateOfPublication;
 
+    boolean issued;
+
     @ManyToOne
     @JoinColumn
-    @JsonIgnore
     Author author;
+
+    @OneToMany(mappedBy = "book",cascade = CascadeType.ALL)
+    List<Transaction>transactions=new ArrayList<>();
 }

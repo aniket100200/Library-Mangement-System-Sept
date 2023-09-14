@@ -6,14 +6,15 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class LibraryCard
@@ -32,6 +33,8 @@ public class LibraryCard
 
     @OneToOne
     @JoinColumn
-    @JsonIgnore
     Student student;
+
+    @OneToMany(mappedBy = "libraryCard",cascade = CascadeType.ALL)
+    List<Transaction> transactionList=new ArrayList<>();
 }

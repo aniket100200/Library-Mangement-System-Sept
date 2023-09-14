@@ -11,6 +11,5 @@ import java.util.List;
 @Repository
 public interface StudentRepository extends JpaRepository<Student,Integer>
 {
-
-    List<Student> findStudentByGender(Gender gender);
+        List<Student> findByGender(Gender gender);
 }

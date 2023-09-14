@@ -1,11 +1,9 @@
 package com.example.LibraryManagementSystemSept.controllers;
 
-import com.example.LibraryManagementSystemSept.RequestDTO.AddAuthorRequestDto;
-import com.example.LibraryManagementSystemSept.RequestDTO.UpdateEmailDto;
-import com.example.LibraryManagementSystemSept.enums.Gender;
-import com.example.LibraryManagementSystemSept.enums.Genre;
-import com.example.LibraryManagementSystemSept.models.Author;
-import com.example.LibraryManagementSystemSept.models.Book;
+import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.Request.AddAuthorRequestDto;
+import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.Request.UpdateEmailDto;
+import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.ResponceDTO.AuthorResponceDto;
+import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.ResponceDTO.BookResponceDto;
 import com.example.LibraryManagementSystemSept.services.AuthorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,24 +23,23 @@ public class AuthorController
     @PostMapping("/add")
     public ResponseEntity addAuthor(@RequestBody AddAuthorRequestDto addAuthorRequestDto)
     {
-        Author responce=authorService.addAuthor(addAuthorRequestDto);
-        return new ResponseEntity(responce, HttpStatus.CREATED);
+      AuthorResponceDto author=authorService.addAuthor(addAuthorRequestDto);
+
+        return new ResponseEntity(author, HttpStatus.CREATED);
     }
-
-
-
-
 
 
     // update the email id of an author  -->> observer lastActivity column
     @PutMapping("/email")
     public ResponseEntity updateEmail(@RequestBody UpdateEmailDto updateEmailDto)
     {
-        try {
-            String ans=authorService.updateEmail(updateEmailDto);
-            return new ResponseEntity<>(ans,HttpStatus.CREATED);
+        try
+        {
+            AuthorResponceDto responceDto=authorService.updateEmail(updateEmailDto);
+            return new ResponseEntity<>(responceDto,HttpStatus.CREATED);
         }
-        catch (Exception e){
+        catch (Exception e)
+        {
            log.error("There is some issue"+e.getMessage(),e.getMessage());
            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -53,7 +50,7 @@ public class AuthorController
     {
         try
         {
-            List<Book>books=authorService.findBooksByAuthor(authorId);
+            List<BookResponceDto>books=authorService.findBooksByAuthor(authorId);
             return new ResponseEntity<>(books,HttpStatus.ACCEPTED);
         }catch (Exception e)
         {
@@ -67,7 +64,7 @@ public class AuthorController
     @GetMapping("/author-Written/{x}")
     public ResponseEntity getAllAuthorsHaveWrittenMoreThanXBooks(@PathVariable("x") Integer x)
     {
-        List<Author>authors=authorService.getAllAuthorsHaveWrittenMoreThanXBooks(x);
+        List<AuthorResponceDto>authors=authorService.getAllAuthorsHaveWrittenMoreThanXBooks(x);
         return new ResponseEntity(authors,HttpStatus.ACCEPTED);
     }
 

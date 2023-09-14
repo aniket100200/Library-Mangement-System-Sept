@@ -1,4 +1,4 @@
-package com.example.LibraryManagementSystemSept.RequestDTO;
+package com.example.LibraryManagementSystemSept.DTOs.RequestDTO.Request;
 
 import com.example.LibraryManagementSystemSept.enums.Genre;
 import lombok.AccessLevel;

@@ -2,6 +2,8 @@ package com.example.LibraryManagementSystemSept.services;
 
 
 import com.example.LibraryManagementSystemSept.CustomException.StudentRelatedException.StudentNotFoundException;
+import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.Request.AddStudentDto;
+import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.ResponceDTO.StudentResponceDto;
 import com.example.LibraryManagementSystemSept.enums.CardStatus;
 import com.example.LibraryManagementSystemSept.enums.Department;
 import com.example.LibraryManagementSystemSept.enums.Gender;
@@ -11,6 +13,7 @@ import com.example.LibraryManagementSystemSept.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,16 +24,23 @@ public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
-    public String addStudent (Student student)
+    public StudentResponceDto addStudent (AddStudentDto addStudentDto)
     {
+
+        Student student=new Student(addStudentDto);
        LibraryCard libraryCard=new LibraryCard();
        libraryCard.setStudent(student);
        libraryCard.setCardId(UUID.randomUUID().toString());
        libraryCard.setCardStatus(CardStatus.Active);
 
        student.setLibraryCard(libraryCard);  //allocated library_card to the Student..
-        studentRepository.save(student); //saved both student and library card.. here because bidirectional mapping.
-        return "Student has been added to the database successfully";
+       student= studentRepository.save(student); //saved both student and library card.. here because bidirectional mapping.
+
+        StudentResponceDto studentResponceDto=new StudentResponceDto(student);
+        studentResponceDto.setLibraryCardId(student.getLibraryCard().getCardId());
+        studentResponceDto.setMessage("Student has been added to the database successfully");
+
+        return studentResponceDto;
     }
 
     public Department getDeptById(Integer id) throws  Exception{
@@ -51,7 +61,7 @@ public class StudentService {
         return "Student Delete Successfully!!";
     }
 
-    public Student updateAge(int age, int regNo)
+    public StudentResponceDto updateAge(int age, int regNo)
     {
         Optional<Student>optionalStudent=studentRepository.findById(regNo);
         if(optionalStudent.isEmpty())throw new StudentNotFoundException("Student Not Found Exception");
@@ -59,23 +69,49 @@ public class StudentService {
         Student student=optionalStudent.get();
         student.setAge(age);
 
-       studentRepository.save(student);
-        return new Student();
+      student= studentRepository.save(student);
+
+      StudentResponceDto studentResponceDto=new StudentResponceDto(student);
+      studentResponceDto.setLibraryCardId(student.getLibraryCard().getCardId());
+      studentResponceDto.setMessage("Student with regNo:"+regNo+" has been Updated Successfully!!");
+        return studentResponceDto;
     }
 
-    public List<Student> getAllMaleStudents(Gender gender)
+    public List<StudentResponceDto> getAllMaleStudents(Gender gender)
     {
 
-        List<Student>studentList=studentRepository.findStudentByGender(gender);
+        List<Student>studentList=studentRepository.findByGender(gender);
 
-        return studentList;
+        List<StudentResponceDto>studentResponceDtos=new ArrayList<>();
+        for(Student student:studentList)
+        {
+            StudentResponceDto studentResponceDto=new StudentResponceDto(student);
+            studentResponceDto.setLibraryCardId(student.getLibraryCard().getCardId());
+            studentResponceDto.setMessage("");
+            studentResponceDtos.add(studentResponceDto);
+        }
+
+        return studentResponceDtos;
     }
 
-    public List<Student> getAllStudents()
+    public List<StudentResponceDto> getAllStudents()
     {
-        List<Student>list=studentRepository.findAll();
+        List<Student>studentList=studentRepository.findAll();
 
+        List<StudentResponceDto>studentResponceDtos=new ArrayList<>();
+        for(Student student:studentList)
+        {
+            StudentResponceDto studentResponceDto=StudentResponceDto.builder()
+                            .name(student.getName())
+                                    .email(student.getEmailId())
+                                            .reg(student.getRegNo())
+                                                    .department(student.getDepartment())
+                                                            .libraryCardId(student.getLibraryCard().getCardId())
+                                                                    .message("Good Student !!")
+                                                                            .build();
+            studentResponceDtos.add(studentResponceDto);
+        }
 
-        return list;
+        return studentResponceDtos;
     }
 }

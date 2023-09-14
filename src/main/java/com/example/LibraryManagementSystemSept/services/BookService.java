@@ -2,7 +2,8 @@ package com.example.LibraryManagementSystemSept.services;
 
 import com.example.LibraryManagementSystemSept.CustomException.AuthorRelatedException.AuthorNotFoundException;
 import com.example.LibraryManagementSystemSept.CustomException.BookRelatedException.BookNotFoundException;
-import com.example.LibraryManagementSystemSept.RequestDTO.AddBookRequestDTO;
+import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.Request.AddBookRequestDTO;
+import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.ResponceDTO.BookResponceDto;
 import com.example.LibraryManagementSystemSept.enums.Genre;
 import com.example.LibraryManagementSystemSept.models.Author;
 import com.example.LibraryManagementSystemSept.models.Book;
@@ -27,7 +28,7 @@ public class BookService
 
     @Autowired
     AuthorRepository authorRepository;
-    public String addBook(AddBookRequestDTO addBookRequestDTO)
+    public BookResponceDto addBook(AddBookRequestDTO addBookRequestDTO)
     {
         Optional<Author>optional=authorRepository.findById(addBookRequestDTO.getAuthorId());
 
@@ -45,8 +46,18 @@ public class BookService
 
         author.getBooks().add(book);
         //save the author
-        authorRepository.save(author);
-        return "Book Added successFuyll";
+       author = authorRepository.save(author);
+
+        log.info("Book Added successFuyll!!");
+       BookResponceDto bookResponceDto=BookResponceDto.builder()
+               .authorName(author.getName())
+               .genre(addBookRequestDTO.getGenre())
+               .title(addBookRequestDTO.getTitle())
+               .cost(addBookRequestDTO.getPrice())
+               .noOfPages(addBookRequestDTO.getNoOfPage())
+               .build();
+
+        return bookResponceDto;
     }
 
     public String deleteBook(Integer bookId)
@@ -67,39 +78,67 @@ public class BookService
         return "Book has Been Deleted Successfully From the Database!!";
     }
 
-    public List<String> getBooksByGenre(Genre genre)
+    public List<BookResponceDto> getBooksByGenre(Genre genre)
     {
         List<Book>books=bookRepository.findByGenre(genre);
 
-        List<String>names=new ArrayList<>();
+        List<BookResponceDto>names=new ArrayList<>();
 
-        for (Book book:books)names.add(book.getTitle());
+        for (Book book:books){
+            BookResponceDto bookResponceDto=BookResponceDto.builder()
+                    .genre(book.getGenre())
+                    .authorName(book.getAuthor().getName())
+                    .title(book.getTitle())
+                    .noOfPages(book.getNoOfPages())
+                    .cost(book.getCost()).build();
+
+            names.add(bookResponceDto);
+        }
         return names;
     }
 
-    public List<String> getBooksByGenreAndMoreThanCost(Genre genre, Integer cost)
+    public List<BookResponceDto> getBooksByGenreAndMoreThanCost(Genre genre, Integer cost)
     {
-        List<Book>books=bookRepository.findByGenre(genre);
+        List<Book>books=bookRepository.findByGenreAndCost(genre.toString(),cost);
 
-        List<String>names=new ArrayList<>();
+        List<BookResponceDto>names=new ArrayList<>();
 
-        for (Book book:books){
-            if(book.getCost() > cost){
-                names.add(book.getTitle());
+        for (Book book:books)
+        {
+            if(book.getCost() > cost)
+            {
+               BookResponceDto bookResponceDto=BookResponceDto.builder()
+                       .authorName(book.getAuthor().getName())
+                       .genre(book.getGenre())
+                       .cost(book.getCost())
+                       .noOfPages(book.getNoOfPages())
+                       .title(book.getTitle())
+                       .build();
+               names.add(bookResponceDto);
             }
         }
         return names;
     }
 
-    public List<Book> findAllBooksBetweenAandB(Integer a, Integer b)
+    public List<BookResponceDto> findAllBooksBetweenAandB(Integer a, Integer b)
     {
         List<Book>bookList=bookRepository.findAll();
 
-        List<Book>books=new ArrayList<>();
-        for(Book book:books)
+        List<BookResponceDto>books=new ArrayList<>();
+        for(Book book:bookList)
         {
             int noOfPages= book.getNoOfPages();
-            if(noOfPages>a && noOfPages<b)books.add(book);
+            if(noOfPages>a && noOfPages<b)
+            {
+                BookResponceDto dto=BookResponceDto.builder()
+                        .authorName(book.getAuthor().getName())
+                        .title(book.getTitle())
+                        .genre(book.getGenre())
+                        .noOfPages(book.getNoOfPages())
+                        .cost(book.getCost())
+                        .build();
+                books.add(dto);
+            }
         }
         if(books.isEmpty()) log.warn("There Are No books Availble");
         return books;
@@ -110,10 +149,10 @@ public class BookService
         List<Book>bookList=bookRepository.findByGenre(genre);
 
 
-       Set collection= new HashSet<>();
+       Set<String> collection= new HashSet<>();
         for(Book book:bookList)
         {
-           if(book.getGenre().equals(genre)) collection.add(book.getAuthor().getName());
+           if(!collection.contains(book.getAuthor().getName())) collection.add(book.getAuthor().getName());
         }
         return collection;
     }

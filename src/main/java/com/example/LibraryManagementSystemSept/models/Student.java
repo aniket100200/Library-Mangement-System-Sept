@@ -1,5 +1,6 @@
 package com.example.LibraryManagementSystemSept.models;
 
+import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.Request.AddStudentDto;
 import com.example.LibraryManagementSystemSept.enums.Department;
 import com.example.LibraryManagementSystemSept.enums.Gender;
 import jakarta.persistence.*;
@@ -30,6 +31,15 @@ public class Student
     private String emailId;
 
     int age;
+
+   public Student(AddStudentDto addStudentDto)
+    {
+       this.name=addStudentDto.getName();
+       this.age=addStudentDto.getAge();
+       this.emailId=addStudentDto.getEmail();
+       this.department=addStudentDto.getDepartment();
+       this.gender=addStudentDto.getGender();
+    }
 
     @Enumerated(EnumType.STRING)
     Gender gender;

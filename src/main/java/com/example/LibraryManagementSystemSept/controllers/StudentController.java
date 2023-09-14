@@ -1,6 +1,8 @@
 package com.example.LibraryManagementSystemSept.controllers;
 
 
+import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.Request.AddStudentDto;
+import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.ResponceDTO.StudentResponceDto;
 import com.example.LibraryManagementSystemSept.enums.Department;
 import com.example.LibraryManagementSystemSept.enums.Gender;
 import com.example.LibraryManagementSystemSept.models.Student;
@@ -21,11 +23,11 @@ public class StudentController
     @Autowired
     private StudentService studentService;
     @PostMapping("/add")
-    public ResponseEntity<String> addStudent (@RequestBody Student student)
+    public ResponseEntity addStudent (@RequestBody AddStudentDto student)
     {
         try
         {
-            String resp =studentService.addStudent(student);
+            StudentResponceDto resp =studentService.addStudent(student);
             return new ResponseEntity<>(resp,HttpStatus.CREATED);
         }
         catch(Exception e)
@@ -78,7 +80,7 @@ public class StudentController
     {
         try
         {
-            Student student=studentService.updateAge(age,regNo);
+            StudentResponceDto student=studentService.updateAge(age,regNo);
 
             log.info("You Have Successfully Updated the age of Student");
             return new ResponseEntity(student,HttpStatus.ACCEPTED);
@@ -92,7 +94,7 @@ public class StudentController
     public ResponseEntity getAllMaleStudents(@RequestParam Gender gender){
         try{
 
-            List<Student>students=studentService.getAllMaleStudents(gender);
+            List<StudentResponceDto>students=studentService.getAllMaleStudents(gender);
             log.info("You have the Student list");
             return new ResponseEntity(students,HttpStatus.OK);
 
@@ -103,10 +105,11 @@ public class StudentController
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity getAllStudents(){
+    public ResponseEntity getAllStudents()
+    {
         try
         {
-            List<Student>students=studentService.getAllStudents();
+            List<StudentResponceDto>students=studentService.getAllStudents();
             log.info("You have the Student list");
             return new ResponseEntity(students,HttpStatus.OK);
 
