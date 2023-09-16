@@ -5,8 +5,9 @@ import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.Request.AddStuden
 import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.ResponceDTO.StudentResponceDto;
 import com.example.LibraryManagementSystemSept.enums.Department;
 import com.example.LibraryManagementSystemSept.enums.Gender;
-import com.example.LibraryManagementSystemSept.models.Student;
 import com.example.LibraryManagementSystemSept.services.StudentService;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,16 +19,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/student")
 @Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class StudentController
 {
     @Autowired
-    private StudentService studentService;
+    StudentService studentService;
     @PostMapping("/add")
     public ResponseEntity addStudent (@RequestBody AddStudentDto student)
     {
         try
         {
-            StudentResponceDto resp =studentService.addStudent(student);
+            StudentResponceDto resp = studentService.addStudent(student);
             return new ResponseEntity<>(resp,HttpStatus.CREATED);
         }
         catch(Exception e)
@@ -43,7 +45,7 @@ public class StudentController
     {
         try
         {
-            Department department=studentService.getDeptById(id);
+            Department department= studentService.getDeptById(id);
             return new ResponseEntity<>(department,HttpStatus.OK);
         }
         catch(Exception e)
@@ -67,7 +69,7 @@ public class StudentController
     {
         try
         {
-            String ans=studentService.deleteStudent(regNo);
+            String ans= studentService.deleteStudent(regNo);
             return new ResponseEntity(ans,HttpStatus.FORBIDDEN);
         }
         catch (Exception e){
@@ -80,7 +82,7 @@ public class StudentController
     {
         try
         {
-            StudentResponceDto student=studentService.updateAge(age,regNo);
+            StudentResponceDto student= studentService.updateAge(age,regNo);
 
             log.info("You Have Successfully Updated the age of Student");
             return new ResponseEntity(student,HttpStatus.ACCEPTED);
@@ -94,7 +96,7 @@ public class StudentController
     public ResponseEntity getAllMaleStudents(@RequestParam Gender gender){
         try{
 
-            List<StudentResponceDto>students=studentService.getAllMaleStudents(gender);
+            List<StudentResponceDto>students= studentService.getAllMaleStudents(gender);
             log.info("You have the Student list");
             return new ResponseEntity(students,HttpStatus.OK);
 
@@ -109,11 +111,12 @@ public class StudentController
     {
         try
         {
-            List<StudentResponceDto>students=studentService.getAllStudents();
+            List<StudentResponceDto>students= studentService.getAllStudents();
             log.info("You have the Student list");
             return new ResponseEntity(students,HttpStatus.OK);
 
-        }catch (Exception e){
+        }catch (Exception e)
+        {
             log.error("Unable to proceed your request");
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }

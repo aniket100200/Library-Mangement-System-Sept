@@ -27,8 +27,6 @@ public class Book
     @Enumerated(EnumType.STRING)
     Genre genre;
 
-    boolean isAvailable;
-
     double cost;
 
     LocalDate dateOfPublication;

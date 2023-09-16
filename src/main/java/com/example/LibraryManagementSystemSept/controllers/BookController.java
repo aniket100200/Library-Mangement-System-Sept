@@ -3,7 +3,6 @@ package com.example.LibraryManagementSystemSept.controllers;
 import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.Request.AddBookRequestDTO;
 import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.ResponceDTO.BookResponceDto;
 import com.example.LibraryManagementSystemSept.enums.Genre;
-import com.example.LibraryManagementSystemSept.models.Book;
 import com.example.LibraryManagementSystemSept.services.BookService;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -40,7 +39,7 @@ public class BookController
     {
        try
        {
-           String res=bookService.deleteBook(bookId);
+           String res= bookService.deleteBook(bookId);
            return new ResponseEntity(res,HttpStatus.ACCEPTED);
        }
        catch (Exception e){
@@ -55,7 +54,7 @@ public class BookController
     @GetMapping("/get-books-by-genre")
     public List<BookResponceDto> getBooksByGenre(@RequestParam Genre genre)
     {
-        List<BookResponceDto>books=bookService.getBooksByGenre(genre);
+        List<BookResponceDto>books= bookService.getBooksByGenre(genre);
         return books;
     }
 
@@ -63,7 +62,7 @@ public class BookController
 
     @GetMapping("/get-books-by-genre-and-more-than/{cost}")
     public List<BookResponceDto>getBooksByGenreAndMoreThanCost(@RequestParam Genre genre, @PathVariable("cost") Integer cost){
-        List<BookResponceDto>ans=bookService.getBooksByGenreAndMoreThanCost(genre,cost);
+        List<BookResponceDto>ans= bookService.getBooksByGenreAndMoreThanCost(genre,cost);
         return ans;
     }
 

@@ -5,6 +5,8 @@ import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.Request.UpdateEma
 import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.ResponceDTO.AuthorResponceDto;
 import com.example.LibraryManagementSystemSept.DTOs.RequestDTO.ResponceDTO.BookResponceDto;
 import com.example.LibraryManagementSystemSept.services.AuthorService;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,16 +16,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @RequestMapping("/author")
 @Slf4j
 public class AuthorController
 {
     @Autowired
-    private AuthorService authorService;
+    AuthorService authorService;
     @PostMapping("/add")
     public ResponseEntity addAuthor(@RequestBody AddAuthorRequestDto addAuthorRequestDto)
     {
-      AuthorResponceDto author=authorService.addAuthor(addAuthorRequestDto);
+      AuthorResponceDto author= authorService.addAuthor(addAuthorRequestDto);
 
         return new ResponseEntity(author, HttpStatus.CREATED);
     }
@@ -35,7 +38,7 @@ public class AuthorController
     {
         try
         {
-            AuthorResponceDto responceDto=authorService.updateEmail(updateEmailDto);
+            AuthorResponceDto responceDto= authorService.updateEmail(updateEmailDto);
             return new ResponseEntity<>(responceDto,HttpStatus.CREATED);
         }
         catch (Exception e)
@@ -50,7 +53,7 @@ public class AuthorController
     {
         try
         {
-            List<BookResponceDto>books=authorService.findBooksByAuthor(authorId);
+            List<BookResponceDto>books= authorService.findBooksByAuthor(authorId);
             return new ResponseEntity<>(books,HttpStatus.ACCEPTED);
         }catch (Exception e)
         {
@@ -64,7 +67,7 @@ public class AuthorController
     @GetMapping("/author-Written/{x}")
     public ResponseEntity getAllAuthorsHaveWrittenMoreThanXBooks(@PathVariable("x") Integer x)
     {
-        List<AuthorResponceDto>authors=authorService.getAllAuthorsHaveWrittenMoreThanXBooks(x);
+        List<AuthorResponceDto>authors= authorService.getAllAuthorsHaveWrittenMoreThanXBooks(x);
         return new ResponseEntity(authors,HttpStatus.ACCEPTED);
     }
 
