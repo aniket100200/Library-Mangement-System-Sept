@@ -30,7 +30,7 @@ public class BookTransformer
                 .cost(addBookRequestDTO.getPrice())
                 .dateOfPublication(addBookRequestDTO.getDataOfPublication())
                 .noOfPages(addBookRequestDTO.getNoOfPage())
-                .issued(addBookRequestDTO.isAvailable())
+                .issued(!addBookRequestDTO.isAvailable())
                 .build();
     }
 

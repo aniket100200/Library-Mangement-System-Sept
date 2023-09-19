@@ -32,4 +32,20 @@ public class TransactionController
             return new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("/return-book")
+    public ResponseEntity returnBook(@RequestParam("sId") Integer studentId,@RequestParam("bId")Integer bookId)
+    {
+        try
+        {
+            IssueBookResponce responce=transactionService.returnBook(studentId,bookId);
+
+            return new ResponseEntity<>(responce, HttpStatus.CREATED);
+        }
+        catch (Exception e)
+        {
+            log.error("OOP's Something went wrong"+e.getMessage());
+            return new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
+    }
 }
